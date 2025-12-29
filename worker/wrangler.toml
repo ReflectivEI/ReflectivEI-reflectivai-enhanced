@@ -1,0 +1,26 @@
+# Cloudflare Worker Configuration for ReflectivAI
+# Production-ready configuration with all required settings
+
+name = "reflectivai-worker"
+main = "index.js"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Public environment variables
+[vars]
+PROVIDER_URL = "https://api.groq.com/openai/v1/chat/completions"
+PROVIDER_MODEL = "llama-3.3-70b-versatile"
+
+# CORS origins - Add your domains here
+CORS_ORIGINS = "https://reflectivei.github.io,https://yxpzdb7o9z.preview.c24.airoapp.ai,https://reflectivai-app-prod.pages.dev,https://production.reflectivai-app-prod.pages.dev,http://localhost:5173,http://localhost:3000"
+
+# KV namespace for session storage
+# IMPORTANT: Replace YOUR_KV_NAMESPACE_ID with actual ID after creating namespace
+# Run: wrangler kv:namespace create "SESS"
+[[kv_namespaces]]
+binding = "SESS"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Secrets (set via wrangler secret put)
+# - PROVIDER_KEY or PROVIDER_KEYS (Groq API key(s))
+# - OPENAI_API_KEY (optional fallback)
