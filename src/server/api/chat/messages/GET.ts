@@ -1,6 +1,11 @@
 import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 
 export default async function handler(req: Request, res: Response) {
+  // Generate or reuse session ID
+  const sessionId = req.headers['x-session-id'] as string || randomUUID();
+  res.setHeader('x-session-id', sessionId);
+  
   res.json({
     messages: [
       {
@@ -22,6 +27,6 @@ export default async function handler(req: Request, res: Response) {
         timestamp: new Date(Date.now() - 3400000).toISOString()
       }
     ],
-    sessionId: 'mock-session-123'
+    sessionId: sessionId
   });
 }

@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 
 const mockResponses = [
   "That's a great question! In pharmaceutical sales, building trust with HCPs is crucial. Let me share some insights...",
@@ -10,6 +11,10 @@ const mockResponses = [
 
 export default async function handler(req: Request, res: Response) {
   try {
+    // Generate or reuse session ID
+    const sessionId = req.headers['x-session-id'] as string || randomUUID();
+    res.setHeader('x-session-id', sessionId);
+    
     const { message, context } = req.body;
 
     if (!message) {
@@ -24,7 +29,7 @@ export default async function handler(req: Request, res: Response) {
     res.json({
       message: randomResponse,
       timestamp: new Date().toISOString(),
-      sessionId: 'mock-session-' + Date.now(),
+      sessionId: sessionId,
       context: context || {}
     });
   } catch (error) {

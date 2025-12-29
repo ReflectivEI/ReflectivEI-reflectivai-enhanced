@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 
 const mockHcpResponses = [
   "I see. Can you provide more specific data on the efficacy compared to current standard of care?",
@@ -10,6 +11,10 @@ const mockHcpResponses = [
 
 export default async function handler(req: Request, res: Response) {
   try {
+    // Generate or reuse session ID
+    const reqSessionId = req.headers['x-session-id'] as string || randomUUID();
+    res.setHeader('x-session-id', reqSessionId);
+    
     const { sessionId, message } = req.body;
 
     if (!sessionId || !message) {

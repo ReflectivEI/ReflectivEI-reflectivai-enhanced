@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 
 export default async function handler(req: Request, res: Response) {
   try {
+    // Generate or reuse session ID
+    const reqSessionId = req.headers['x-session-id'] as string || randomUUID();
+    res.setHeader('x-session-id', reqSessionId);
+    
     const { sessionId } = req.body;
 
     if (!sessionId) {

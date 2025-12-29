@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
+import { randomUUID } from 'crypto';
 
 export default async function handler(req: Request, res: Response) {
   try {
+    // Generate or reuse session ID
+    const sessionId = req.headers['x-session-id'] as string || randomUUID();
+    res.setHeader('x-session-id', sessionId);
+    
     const { scenarioId, difficulty } = req.body;
 
     if (!scenarioId) {
@@ -12,7 +17,7 @@ export default async function handler(req: Request, res: Response) {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     res.json({
-      sessionId: 'roleplay-session-' + Date.now(),
+      sessionId: sessionId,
       scenarioId,
       difficulty: difficulty || 'intermediate',
       hcpProfile: {
