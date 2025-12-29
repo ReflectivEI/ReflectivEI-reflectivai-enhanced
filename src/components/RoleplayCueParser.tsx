@@ -45,14 +45,17 @@ export function parseRoleplayResponse(text: string): ParsedSegment[] {
   return segments;
 }
 
-// Styled cue component with muted gray theme (matches screenshot)
+// Styled cue component with burnt orange theme and eye icon (matches screenshot)
 export function SituationalCue({ content }: { content: string }) {
   return (
     <span 
-      className="text-slate-500 dark:text-slate-400 italic"
+      className="inline-flex items-center gap-1.5 px-2 py-0.5 mx-1 rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800"
       data-testid="situational-cue"
     >
-      {content}
+      <Eye className="h-3 w-3 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+      <span className="text-orange-700 dark:text-orange-300 text-sm italic">
+        {content}
+      </span>
     </span>
   );
 }
@@ -76,7 +79,7 @@ export function RoleplayMessageContent({ content }: { content: string }) {
   );
 }
 
-// Alternative: Block-style cue display (paragraph style like screenshot)
+// Alternative: Block-style cue display with burnt orange styling and eye icon
 export function RoleplayMessageWithBlockCues({ content }: { content: string }) {
   const segments = parseRoleplayResponse(content);
 
@@ -84,9 +87,12 @@ export function RoleplayMessageWithBlockCues({ content }: { content: string }) {
     <div className="space-y-2">
       {segments.map((segment, index) => (
         segment.type === 'cue' ? (
-          <p key={index} className="text-slate-500 dark:text-slate-400 italic leading-relaxed">
-            {segment.content}
-          </p>
+          <div key={index} className="flex items-start gap-2 px-3 py-2 rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800">
+            <Eye className="h-4 w-4 mt-0.5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+            <p className="text-orange-700 dark:text-orange-300 italic leading-relaxed">
+              {segment.content}
+            </p>
+          </div>
         ) : (
           <p key={index} className="text-foreground leading-relaxed">
             {segment.content}
