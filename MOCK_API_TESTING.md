@@ -10,7 +10,7 @@ Your ReflectivAI application is now configured with **local mock API endpoints**
 
 ### Mock API Endpoints Created
 
-All endpoints are now available locally at `http://localhost:5173/api/*`:
+All endpoints are now available locally at `http://localhost:20000/api/*`:
 
 #### 1. **Status Endpoint**
 - **GET** `/api/status`
@@ -35,7 +35,7 @@ All endpoints are now available locally at `http://localhost:5173/api/*`:
 The `.env` file has been updated to use local mock API:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:5173
+VITE_API_BASE_URL=http://localhost:20000
 ```
 
 ---
@@ -48,11 +48,11 @@ VITE_API_BASE_URL=http://localhost:5173
 npm run dev
 ```
 
-The server will start on `http://localhost:5173`
+The server will start on `http://localhost:20000`
 
 ### Step 2: Open the Application
 
-Navigate to: `http://localhost:5173` (or the preview URL)
+Navigate to: `http://localhost:20000` or your preview URL: https://yxpzdb7o9z.preview.c24.airoapp.ai
 
 ### Step 3: Test Each Feature
 
@@ -153,7 +153,7 @@ Open Developer Tools → Network tab:
 
 **Solution:**
 1. Verify dev server is running (`npm run dev`)
-2. Check `.env` has `VITE_API_BASE_URL=http://localhost:5173`
+2. Check `.env` has `VITE_API_BASE_URL=http://localhost:20000`
 3. Restart dev server if needed
 
 #### Issue: Chat doesn't respond
@@ -235,8 +235,8 @@ npm run dev
 
 ### Initial Setup
 - [ ] Dev server is running (`npm run dev`)
-- [ ] `.env` has `VITE_API_BASE_URL=http://localhost:5173`
-- [ ] Browser is open to `http://localhost:5173`
+- [ ] `.env` has `VITE_API_BASE_URL=http://localhost:20000`
+- [ ] Browser is open to `http://localhost:20000` or preview URL
 - [ ] API Status indicator shows green
 
 ### Dashboard Page
