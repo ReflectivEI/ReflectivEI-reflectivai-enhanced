@@ -45,17 +45,14 @@ export function parseRoleplayResponse(text: string): ParsedSegment[] {
   return segments;
 }
 
-// Styled cue component with amber/gold theme
+// Styled cue component with muted gray theme (matches screenshot)
 export function SituationalCue({ content }: { content: string }) {
   return (
     <span 
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 mx-1 rounded-md bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20"
+      className="text-slate-500 dark:text-slate-400 italic"
       data-testid="situational-cue"
     >
-      <Eye className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-      <span className="text-amber-700 dark:text-amber-300 text-sm italic">
-        {content}
-      </span>
+      {content}
     </span>
   );
 }
@@ -65,49 +62,37 @@ export function RoleplayMessageContent({ content }: { content: string }) {
   const segments = parseRoleplayResponse(content);
 
   return (
-    <div className="leading-relaxed">
+    <div className="leading-relaxed space-y-1">
       {segments.map((segment, index) => (
         segment.type === 'cue' ? (
-          <SituationalCue key={index} content={segment.content} />
+          <div key={index} className="block">
+            <SituationalCue content={segment.content} />
+          </div>
         ) : (
-          <span key={index}>{segment.content}</span>
+          <span key={index} className="text-foreground">{segment.content}</span>
         )
       ))}
     </div>
   );
 }
 
-// Alternative: Block-style cue display for more prominent visualization
+// Alternative: Block-style cue display (paragraph style like screenshot)
 export function RoleplayMessageWithBlockCues({ content }: { content: string }) {
   const segments = parseRoleplayResponse(content);
-  const cues = segments.filter(s => s.type === 'cue');
-  const dialogue = segments.filter(s => s.type === 'text').map(s => s.content).join(' ');
 
   return (
     <div className="space-y-2">
-      {/* Show cues in a separate block at the top */}
-      {cues.length > 0 && (
-        <div className="flex flex-wrap gap-2 pb-2 border-b border-amber-500/20">
-          {cues.map((cue, index) => (
-            <div 
-              key={index}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20"
-              data-testid={`cue-block-${index}`}
-            >
-              <Eye className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-              <span className="text-amber-700 dark:text-amber-300 text-sm italic">
-                {cue.content}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {/* Dialogue text */}
-      <div className="flex items-start gap-2">
-        <MessageCircle className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-        <p className="text-foreground">{dialogue}</p>
-      </div>
+      {segments.map((segment, index) => (
+        segment.type === 'cue' ? (
+          <p key={index} className="text-slate-500 dark:text-slate-400 italic leading-relaxed">
+            {segment.content}
+          </p>
+        ) : (
+          <p key={index} className="text-foreground leading-relaxed">
+            {segment.content}
+          </p>
+        )
+      ))}
     </div>
   );
 }
