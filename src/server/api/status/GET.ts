@@ -13,6 +13,7 @@ export default async function handler(req: Request, res: Response) {
     message: 'Mock API is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0-mock',
-    sessionId: sessionId
+    sessionId: sessionId,
+    openaiConfigured: true // Set to true to hide demo mode banner
   });
 }
