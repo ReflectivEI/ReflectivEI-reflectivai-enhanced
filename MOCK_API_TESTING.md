@@ -1,433 +1,287 @@
 # Mock API Testing Guide
 
-## ✅ Ready to Test!
+## Overview
 
-Your ReflectivAI application is now wired to a **local mock API** that simulates all Cloudflare Worker endpoints. You can test the full functionality without needing a real Cloudflare Worker!
+Your ReflectivAI application is now configured with **local mock API endpoints** that simulate the Cloudflare Worker functionality. This allows you to test all features immediately without needing to set up a real Cloudflare Worker.
 
 ---
 
-## 🚀 Quick Start
+## ✅ What's Been Set Up
 
-### 1. Start the Development Server
+### Mock API Endpoints Created
+
+All endpoints are now available locally at `http://localhost:5173/api/*`:
+
+#### 1. **Status Endpoint**
+- **GET** `/api/status`
+- Returns API health status
+- Used by the API Status indicator in the header
+
+#### 2. **Chat Endpoints**
+- **POST** `/api/chat/send` - Send message to AI coach
+- **GET** `/api/chat/messages` - Get chat history
+- **POST** `/api/chat/clear` - Clear chat history
+
+#### 3. **Roleplay Endpoints**
+- **POST** `/api/roleplay/start` - Start roleplay session
+- **POST** `/api/roleplay/respond` - Send response in roleplay
+- **POST** `/api/roleplay/end` - End roleplay session
+
+#### 4. **Dashboard Endpoints**
+- **GET** `/api/dashboard/insights` - Get daily tips and insights
+
+### Configuration
+
+The `.env` file has been updated to use local mock API:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5173
+```
+
+---
+
+## 🚀 How to Test
+
+### Step 1: Start the Development Server
 
 ```bash
 npm run dev
 ```
 
-The server will start on `http://localhost:5173` (or the port shown in your terminal).
+The server will start on `http://localhost:5173`
 
-### 2. Open in Browser
+### Step 2: Open the Application
 
-Navigate to: **http://localhost:5173**
+Navigate to: `http://localhost:5173` (or the preview URL)
 
-You should see the ReflectivAI Dashboard.
+### Step 3: Test Each Feature
 
----
-
-## 🧪 What's Been Set Up
-
-### Mock API Endpoints Created:
-
-✅ **Status Check**
-- `GET /api/status` - Health check endpoint
-- Returns: `{ status: 'ok', message: 'Mock API is running' }`
-
-✅ **Chat Endpoints**
-- `POST /api/chat/send` - Send message to AI coach
-- `GET /api/chat/messages` - Get chat history
-- `POST /api/chat/clear` - Clear chat history
-
-✅ **Roleplay Endpoints**
-- `POST /api/roleplay/start` - Start roleplay scenario
-- `POST /api/roleplay/respond` - Send roleplay response
-- `POST /api/roleplay/end` - End roleplay session
-
-✅ **Dashboard Endpoint**
-- `GET /api/dashboard/insights` - Get daily insights and tips
-
-### Mock Data Features:
-
-- **Realistic responses** - AI coach responses sound natural
-- **Simulated delays** - 500-1000ms delays to mimic real API
-- **Random variations** - Different responses each time
-- **EQ metrics** - Random but realistic scores (60-100 range)
-- **Error handling** - Proper validation and error responses
-
----
-
-## 🧪 Testing Each Feature
-
-### 1. Dashboard (`/`)
+#### ✅ Dashboard Page (`/`)
 
 **What to test:**
-- [ ] Page loads without errors
-- [ ] Daily tip displays
-- [ ] Focus areas show with scores
-- [ ] Recent activity displays
-- [ ] Suggested exercises appear
-- [ ] API status indicator shows "Connected" (green)
+- Daily tip card displays
+- Focus areas show with scores
+- Recent activity stats appear
+- Suggested exercises load
 
 **Expected behavior:**
-- Dashboard loads with mock insights
-- All cards display properly
-- No console errors
+- Mock data loads immediately
+- No API errors in console
+- API Status indicator shows green (connected)
 
 ---
 
-### 2. AI Coach Chat (`/chat`)
+#### ✅ Chat Page (`/chat`)
 
 **What to test:**
-- [ ] Chat interface loads
-- [ ] Can type messages
-- [ ] Send button works
-- [ ] AI responds after ~800ms delay
-- [ ] Messages appear in chat history
-- [ ] Can clear chat history
-- [ ] Context filters work (disease state, specialty, etc.)
+1. View existing chat history (3 mock messages)
+2. Type a message and send it
+3. Receive AI coach response (random from 5 mock responses)
+4. Clear chat history button
 
-**How to test:**
-1. Navigate to `/chat`
-2. Type a message: "How do I handle objections?"
-3. Click Send
-4. Wait for AI response (~800ms)
-5. Verify response appears
-6. Try clearing chat history
+**Expected behavior:**
+- Messages appear in chat interface
+- AI responses have ~800ms delay (simulated processing)
+- Each response is different (randomly selected)
+- Clear button resets the chat
 
-**Expected responses:**
-- "That's a great question! In pharmaceutical sales..."
-- "I understand your concern. When approaching objections..."
-- "Excellent point! The DISC framework can really help here..."
-- And more variations
+**Sample messages to try:**
+- "How do I handle objections?"
+- "Tell me about DISC profiles"
+- "I need help with a difficult HCP"
 
 ---
 
-### 3. Roleplay Simulator (`/roleplay`)
+#### ✅ Roleplay Page (`/roleplay`)
 
 **What to test:**
-- [ ] Scenario list loads
-- [ ] Can filter by disease state, specialty, difficulty
-- [ ] Can start a roleplay scenario
-- [ ] HCP profile displays
-- [ ] Can send responses
-- [ ] HCP responds after ~1000ms delay
-- [ ] Live EQ metrics update
-- [ ] Can end roleplay session
-- [ ] Feedback dialog shows summary
-
-**How to test:**
-1. Navigate to `/roleplay`
-2. Select a scenario (e.g., "Cardiology - New Treatment Introduction")
-3. Click "Start Roleplay"
-4. Read HCP's initial message
+1. Select a scenario from the list
+2. Click "Start Roleplay"
+3. View HCP profile (Dr. Sarah Mitchell - Cardiologist)
+4. Read initial HCP message
 5. Type your response
-6. Click Send
-7. Watch EQ metrics update
-8. Continue conversation (3-5 exchanges)
-9. Click "End Roleplay"
-10. Review feedback summary
+6. Receive HCP reply with live EQ metrics
+7. Continue conversation (5-8 exchanges)
+8. End roleplay session
+9. View feedback summary
 
 **Expected behavior:**
-- HCP profile: Dr. Sarah Mitchell (Cardiology)
-- Initial message: "Good morning. I understand you wanted to discuss..."
-- HCP responses vary (efficacy questions, safety concerns, cost questions)
-- EQ metrics show realistic scores (60-100 range)
-- Feedback includes strengths and improvements
+- Roleplay starts with ~500ms delay
+- HCP responds with ~1000ms delay (simulated thinking)
+- Live EQ metrics update after each exchange:
+  - Empathy: 70-100
+  - Active Listening: 65-95
+  - Adaptability: 60-90
+  - Emotional Regulation: 75-100
+  - Social Awareness: 70-100
+  - Relationship Management: 65-95
+- Feedback shows strengths and improvements
+- Session summary displays overall score and metrics
+
+**Sample responses to try:**
+- "Thank you for your time, Dr. Mitchell. I'd like to share some recent clinical data..."
+- "I understand your concern about safety. Let me address that directly..."
+- "What specific outcomes are most important for your patients?"
 
 ---
 
-### 4. Frameworks (`/frameworks`)
+## 🔍 Debugging Tips
 
-**What to test:**
-- [ ] Framework cards display
-- [ ] Can view framework details
-- [ ] DISC, SPIN, LAER, etc. frameworks load
-- [ ] Framework descriptions are readable
+### Check API Status
 
-**Expected behavior:**
-- All frameworks display with icons
-- Clicking a framework shows details
-- No API calls needed (static data)
+Look at the header of the application:
+- **Green badge** = API connected
+- **Red badge** = API disconnected
 
----
+### Browser Console
 
-### 5. Training Modules (`/modules`)
+Open Developer Tools (F12) and check the Console tab:
+- No errors = Everything working
+- CORS errors = Check VITE_API_BASE_URL in .env
+- 404 errors = Endpoint might be missing
 
-**What to test:**
-- [ ] Module list displays
-- [ ] Can view module details
-- [ ] Modules organized by category
-- [ ] Progress indicators work
+### Network Tab
 
-**Expected behavior:**
-- Modules load from local data
-- No API calls needed (static data)
+Open Developer Tools → Network tab:
+- Filter by "Fetch/XHR"
+- Watch API calls in real-time
+- Check request/response data
 
----
+### Common Issues
 
-### 6. Exercises (`/exercises`)
-
-**What to test:**
-- [ ] Exercise list displays
-- [ ] Can filter by difficulty
-- [ ] Exercise details show
-- [ ] Can start exercises
-
-**Expected behavior:**
-- Exercises load from local data
-- No API calls needed (static data)
-
----
-
-### 7. EI Metrics (`/ei-metrics`)
-
-**What to test:**
-- [ ] Metrics dashboard displays
-- [ ] Charts render correctly
-- [ ] Metric cards show scores
-- [ ] Historical data displays
-
-**Expected behavior:**
-- Metrics load from local data
-- Charts display properly
-- No API calls needed (static data)
-
----
-
-### 8. Knowledge Base (`/knowledge`)
-
-**What to test:**
-- [ ] Knowledge base interface loads
-- [ ] Can search/browse topics
-- [ ] Articles display
-
-**Expected behavior:**
-- Knowledge base loads from local data
-- No API calls needed (static data)
-
----
-
-### 9. Heuristics (`/heuristics`)
-
-**What to test:**
-- [ ] Heuristics templates display
-- [ ] Can view template details
-- [ ] Templates organized by category
-
-**Expected behavior:**
-- Templates load from local data
-- No API calls needed (static data)
-
----
-
-### 10. Data Reports (`/data-reports`)
-
-**What to test:**
-- [ ] Reports dashboard displays
-- [ ] Charts and graphs render
-- [ ] Data tables display
-
-**Expected behavior:**
-- Reports load from local data
-- Charts display properly
-- No API calls needed (static data)
-
----
-
-### 11. SQL Translator (`/sql`)
-
-**What to test:**
-- [ ] SQL interface loads
-- [ ] Can enter natural language queries
-- [ ] Interface is functional
-
-**Note:** SQL translation endpoint not yet mocked. This page will load but translation won't work until you add the endpoint or connect to real worker.
-
----
-
-## 🔍 Checking API Status
-
-### API Status Indicator
-
-Look for the API status indicator in the header:
-
-- 🟢 **Green "Connected"** = Mock API is working
-- 🔴 **Red "Disconnected"** = API not responding
-
-### Testing API Health
-
-Open browser console and run:
-
-```javascript
-fetch('http://localhost:5173/api/status')
-  .then(r => r.json())
-  .then(console.log);
-```
-
-Expected response:
-```json
-{
-  "status": "ok",
-  "message": "Mock API is running",
-  "timestamp": "2025-12-29T06:20:00.000Z",
-  "version": "1.0.0-mock"
-}
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Issue: "API Status: Disconnected"
+#### Issue: API Status shows "Disconnected"
 
 **Solution:**
-1. Check that dev server is running (`npm run dev`)
-2. Verify `.env` has: `VITE_API_BASE_URL=http://localhost:5173`
-3. Restart the dev server
-4. Clear browser cache and reload
+1. Verify dev server is running (`npm run dev`)
+2. Check `.env` has `VITE_API_BASE_URL=http://localhost:5173`
+3. Restart dev server if needed
 
-### Issue: "404 Not Found" on API calls
-
-**Solution:**
-1. Check that the endpoint file exists in `src/server/api/`
-2. Verify the file follows the naming convention (e.g., `GET.ts`, `POST.ts`)
-3. Restart the dev server
-
-### Issue: Chat/Roleplay not responding
+#### Issue: Chat doesn't respond
 
 **Solution:**
-1. Open browser console (F12)
-2. Check for JavaScript errors
-3. Verify API calls are being made (Network tab)
-4. Check that mock endpoints are returning data
+1. Check browser console for errors
+2. Verify `/api/chat/send` endpoint exists
+3. Check request payload in Network tab
 
-### Issue: TypeScript errors
+#### Issue: Roleplay won't start
 
 **Solution:**
-```bash
-npm run type-check
-```
-Fix any reported errors.
+1. Ensure scenario is selected
+2. Check `/api/roleplay/start` endpoint
+3. Verify scenarioId is being sent
+
+---
+
+## 📊 Mock Data Details
+
+### Chat Responses (5 variations)
+
+1. "That's a great question! In pharmaceutical sales, building trust with HCPs is crucial..."
+2. "I understand your concern. When approaching objections, it's important to listen actively..."
+3. "Excellent point! The DISC framework can really help here..."
+4. "Let's break this down using the Signal Intelligence™ framework..."
+5. "That's a common challenge in life sciences sales. Have you considered using the SPIN selling technique..."
+
+### HCP Roleplay Responses (5 variations)
+
+1. "I see. Can you provide more specific data on the efficacy compared to current standard of care?"
+2. "That's interesting, but I'm concerned about the side effect profile. What does the safety data show?"
+3. "I appreciate the information. How does this fit into the current treatment guidelines?"
+4. "The data looks promising, but what about the cost? Will my patients' insurance cover this?"
+5. "I'd need to see more long-term data before I feel comfortable prescribing this to my patients."
+
+### EQ Metrics (Random ranges)
+
+- **Empathy**: 70-100
+- **Active Listening**: 65-95
+- **Adaptability**: 60-90
+- **Emotional Regulation**: 75-100
+- **Social Awareness**: 70-100
+- **Relationship Management**: 65-95
 
 ---
 
 ## 🔄 Switching to Real Cloudflare Worker
 
-When you're ready to use a real Cloudflare Worker:
+When you're ready to use your actual Cloudflare Worker:
 
-### 1. Update `.env`
+### Step 1: Update `.env`
 
 ```bash
 # Comment out mock API
 # VITE_API_BASE_URL=http://localhost:5173
 
-# Uncomment and set your worker URL
-VITE_API_BASE_URL=https://reflectivai-api-dev.your-subdomain.workers.dev
+# Uncomment and add your worker URL
+VITE_API_BASE_URL=https://your-worker.your-subdomain.workers.dev
 ```
 
-### 2. Restart Dev Server
+### Step 2: Restart Dev Server
 
 ```bash
 # Stop current server (Ctrl+C)
+# Start again
 npm run dev
 ```
 
-### 3. Test Connection
+### Step 3: Test Connection
 
-- API status should show "Connected" if worker is accessible
-- If "Disconnected", check worker URL and CORS settings
-
----
-
-## 📊 Mock API Response Examples
-
-### Chat Response
-
-```json
-{
-  "message": "That's a great question! In pharmaceutical sales...",
-  "timestamp": "2025-12-29T06:20:00.000Z",
-  "sessionId": "mock-session-1735456800000",
-  "context": {}
-}
-```
-
-### Roleplay Start Response
-
-```json
-{
-  "sessionId": "roleplay-session-1735456800000",
-  "scenarioId": "cardio-new-treatment",
-  "difficulty": "intermediate",
-  "hcpProfile": {
-    "name": "Dr. Sarah Mitchell",
-    "specialty": "Cardiology",
-    "personality": "Analytical and detail-oriented",
-    "concerns": ["Efficacy data", "Patient safety", "Cost-effectiveness"]
-  },
-  "initialMessage": "Good morning. I understand you wanted to discuss...",
-  "timestamp": "2025-12-29T06:20:00.000Z"
-}
-```
-
-### Roleplay Response with EQ Metrics
-
-```json
-{
-  "message": "I see. Can you provide more specific data...",
-  "eqMetrics": {
-    "empathy": 82,
-    "activeListening": 75,
-    "adaptability": 70,
-    "emotionalRegulation": 80,
-    "socialAwareness": 76,
-    "relationshipManagement": 72
-  },
-  "feedback": {
-    "strengths": ["Good use of data", "Professional tone"],
-    "improvements": ["Could ask more open-ended questions"]
-  },
-  "timestamp": "2025-12-29T06:20:00.000Z"
-}
-```
+- Check API Status indicator (should be green)
+- Test chat functionality
+- Test roleplay functionality
 
 ---
 
 ## ✅ Testing Checklist
 
-Before considering the mock API complete, verify:
+### Initial Setup
+- [ ] Dev server is running (`npm run dev`)
+- [ ] `.env` has `VITE_API_BASE_URL=http://localhost:5173`
+- [ ] Browser is open to `http://localhost:5173`
+- [ ] API Status indicator shows green
 
-- [ ] Dev server starts without errors
-- [ ] Dashboard loads and displays mock data
-- [ ] Chat sends messages and receives responses
-- [ ] Roleplay starts, responds, and ends properly
-- [ ] EQ metrics update during roleplay
-- [ ] API status shows "Connected"
+### Dashboard Page
+- [ ] Daily tip displays
+- [ ] Focus areas show with scores
+- [ ] Recent activity stats appear
+- [ ] Suggested exercises load
 - [ ] No console errors
-- [ ] All pages load without breaking
-- [ ] Theme toggle works (dark/light mode)
-- [ ] Navigation between pages works
+
+### Chat Page
+- [ ] Chat history loads (3 messages)
+- [ ] Can send new message
+- [ ] AI responds within ~1 second
+- [ ] Response is relevant
+- [ ] Clear button works
+
+### Roleplay Page
+- [ ] Can select scenario
+- [ ] Roleplay starts successfully
+- [ ] HCP profile displays
+- [ ] Initial message appears
+- [ ] Can send response
+- [ ] HCP replies with delay
+- [ ] EQ metrics update live
+- [ ] Can end session
+- [ ] Feedback summary displays
 
 ---
 
-## 📝 Next Steps
+## 🎉 Success!
 
-1. **Test all features** using this guide
+You now have a fully functional ReflectivAI application with mock API endpoints. You can:
+
+✅ Test all features immediately
+✅ See how the app works without a Cloudflare Worker
+✅ Develop and iterate on the frontend
+✅ Switch to real Cloudflare Worker when ready
+
+---
+
+## 📞 Next Steps
+
+1. **Test the application** using this guide
 2. **Report any issues** you find
-3. **When ready**, switch to real Cloudflare Worker
-4. **Compare behavior** between mock and real API
+3. **When ready**, set up your Cloudflare Worker using `CLOUDFLARE_WORKER_SETUP.md`
+4. **Switch to real API** by updating `.env`
 
----
-
-## 💡 Tips
-
-- **Mock API is for testing only** - It doesn't persist data
-- **Responses are random** - Each request gets a different response
-- **Delays are simulated** - Real API may be faster or slower
-- **No authentication** - Mock API doesn't require API keys
-- **Local only** - Mock API only works on localhost
-
----
-
-**Happy Testing! 🎉**
-
-You can now explore the full ReflectivAI platform without needing a Cloudflare Worker!
+Happy testing! 🚀
