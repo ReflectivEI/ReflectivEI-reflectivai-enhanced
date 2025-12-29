@@ -25,6 +25,7 @@ if (allowedHosts.length === 0) {
 }
 
 export default defineConfig(({ mode }) => ({
+	base: '/ReflectivEI-reflectivai-enhanced/',
 	plugins: [
 		react({
 			babel: {
