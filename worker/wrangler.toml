@@ -19,7 +19,7 @@ CORS_ORIGINS = "https://reflectivei.github.io,https://reflectivei.github.io/Refl
 # Run: wrangler kv:namespace create "SESS"
 [[kv_namespaces]]
 binding = "SESS"
-id = "YOUR_KV_NAMESPACE_ID"
+id = "75ab38c3bd1d4c37a0f91d4ffc5909a7"
 
 # Secrets (set via wrangler secret put)
 # - PROVIDER_KEY or PROVIDER_KEYS (Groq API key(s))
