@@ -43,18 +43,26 @@ function getCorsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers':  'Content-Type, Authorization, X-Session-ID',  // ✅ ADDED X-Session-ID
+    'Access-Control-Expose-Headers': 'X-Session-ID',  // ✅ ADDED - Allows frontend to read response header
     'Access-Control-Max-Age': '86400'
   };
 }
 
 function corsResponse(body, status = 200, origin = '') {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...getCorsHeaders(origin)
+  };
+  
+  // Add X-Session-ID to response headers if present
+  if (body.sessionId) {
+    headers['X-Session-ID'] = body.sessionId;
+  }
+  
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      'Content-Type': 'application/json',
-      ...getCorsHeaders(origin)
-    }
+    headers
   });
 }
 
