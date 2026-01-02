@@ -1,77 +1,69 @@
-import { defineConfig, type Plugin } from "vite";
-import react from "@vitejs/plugin-react";
 import path from "path";
-import sourceMapperPlugin from "./source-mapper/src/index";
-import { devToolsPlugin } from "./dev-tools/src/vite-plugin";
-import { fullStoryPlugin } from "./fullstory-plugin";
-import apiRoutes from "vite-plugin-api-routes";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import vercel from "vite-plugin-vercel";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+import svgr from "vite-plugin-svgr";
+// import apiRoutes from "vite-plugin-api-routes";
 
-const allowedHosts: string[] = [];
-if (process.env.FRONTEND_DOMAIN) {
-	allowedHosts.push(
-		process.env.FRONTEND_DOMAIN,
-		`http://${process.env.FRONTEND_DOMAIN}`,
-		`https://${process.env.FRONTEND_DOMAIN}`,
-	);
-}
-if (process.env.ALLOWED_ORIGINS) {
-	allowedHosts.push(...process.env.ALLOWED_ORIGINS.split(","));
-}
-if (process.env.VITE_PARENT_ORIGIN) {
-	allowedHosts.push(process.env.VITE_PARENT_ORIGIN);
-}
-if (allowedHosts.length === 0) {
-	allowedHosts.push("*");
-}
-
-export default defineConfig(({ mode }) => ({
-	base: '/ReflectivEI-reflectivai-enhanced/',
-	plugins: [
-		react({
-			babel: {
-				plugins: mode === 'development' ? [sourceMapperPlugin] : [],
-			},
-		}),
-		apiRoutes({
-			mode: "isolated",
-			configure: "src/server/configure.js",
-			dirs: [{ dir: "./src/server/api", route: "" }],
-			forceRestart: mode === "development",
-		}),
-		...(mode === "development"
-			? [devToolsPlugin() as Plugin, fullStoryPlugin()]
-			: []),
-	],
-
-	resolve: {
-		alias: {
-			nothing: "/src/fallbacks/missingModule.ts",
-			"@/api": path.resolve(__dirname, "./src/server/api"),
-			"@": path.resolve(__dirname, "./src"),
-			"@shared": path.resolve(__dirname, "./shared"),
-		},
-	},
-
-	server: {
-		host: "0.0.0.0",
-		port: parseInt(process.env.PORT || "5173"),
-		strictPort: !!process.env.PORT,
-		allowedHosts,
-		cors: {
-			origin: allowedHosts,
-			credentials: true,
-			methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-			allowedHeaders: ["Content-Type", "Authorization", "Accept", "User-Agent"],
-		},
-		hmr: {
-			overlay: false,
-		},
-	},
-
-	build: {
-		sourcemap: mode === 'development',
-		rollupOptions: {
-			// No external dependencies - bundle everything
-		},
-	},
-}));
+export default defineConfig({
+  plugins: [
+    react(),
+    svgr({
+      svgrOptions: {
+        icon: true,
+      },
+    }),
+    nodePolyfills({
+      include: ["buffer", "stream", "util", "events"],
+      globals: {
+        Buffer: true,
+        global: true,
+        process: true,
+      },
+    }),
+    vercel({
+      additionalEndpoints: [
+        {
+          source: "/api/**",
+          destination: "/api",
+        },
+      ],
+    }),
+    // apiRoutes plugin disabled - using Cloudflare Worker for API endpoints
+    // apiRoutes({
+    //   moduleId: "virtual:api",
+    //   routesDir: path.resolve(__dirname, "server/routes"),
+    //   server: "hono",
+    // }),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  optimizeDeps: {
+    exclude: ["lucide-react"],
+  },
+  build: {
+    outDir: "dist",
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
+  },
+  server: {
+    port: 5000,
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+});
