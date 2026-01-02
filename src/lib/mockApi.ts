@@ -1,108 +1,69 @@
-// Mock API for GitHub Pages deployment (no backend available)
-// This provides mock responses for all API endpoints
+// Mock API configuration
+// Set to false in production to use the actual Cloudflare Worker
+// Set to true during development if you want to use mock data
+export const MOCK_API_ENABLED = false;
 
-export const MOCK_API_ENABLED = true; // Set to false when Cloudflare Worker is deployed
+// Mock delay to simulate network latency (in ms)
+export const MOCK_DELAY = 500;
 
-interface MockResponse {
-  status: number;
-  data: any;
-  headers?: Record<string, string>;
-}
+// Mock user data
+export const MOCK_USER = {
+  id: 'mock-user-123',
+  email: 'demo@example.com',
+  name: 'Demo User',
+  createdAt: new Date('2024-01-01'),
+};
 
-let mockSessionId = 'mock-session-' + Math.random().toString(36).substring(7);
+// Mock conversation data
+export const MOCK_CONVERSATIONS = [
+  {
+    id: 'conv-1',
+    userId: 'mock-user-123',
+    title: 'Introduction to AI',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15'),
+  },
+  {
+    id: 'conv-2',
+    userId: 'mock-user-123',
+    title: 'Machine Learning Basics',
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-14'),
+  },
+];
 
-export function getMockSessionId(): string {
-  return mockSessionId;
-}
-
-export async function mockApiRequest(
-  method: string,
-  url: string,
-  data?: unknown
-): Promise<MockResponse> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  // Parse the URL to get the endpoint
-  const path = url.replace(/^https?:\/\/[^\/]+/, '');
-
-  // Route to appropriate mock handler
-  if (path === '/api/status' || path === '/status') {
-    return {
-      status: 200,
-      data: {
-        openaiConfigured: false,
-        message: 'Demo Mode - Using mock data (GitHub Pages deployment)'
-      },
-      headers: { 'x-session-id': mockSessionId }
-    };
-  }
-
-  if (path === '/api/health' || path === '/health') {
-    return {
-      status: 200,
-      data: { status: 'ok', mode: 'mock' },
-      headers: { 'x-session-id': mockSessionId }
-    };
-  }
-
-  if (path === '/api/dashboard/insights' || path === '/dashboard/insights') {
-    return {
-      status: 200,
-      data: {
-        dailyTip: 'In pharma sales, building trust takes time. Focus on understanding the HCP\'s challenges before presenting solutions.',
-        focusArea: 'Active Listening',
-        suggestedExercise: {
-          title: 'Reflective Listening Practice',
-          description: 'Practice paraphrasing what the HCP says before responding. This shows you\'re truly listening and builds rapport.'
-        },
-        motivationalQuote: 'The most important thing in communication is hearing what isn\'t said. - Peter Drucker'
-      },
-      headers: { 'x-session-id': mockSessionId }
-    };
-  }
-
-  if (path.includes('/api/chat') || path.includes('/chat')) {
-    if (method === 'POST') {
-      return {
-        status: 200,
-        data: {
-          userMessage: { role: 'user', content: (data as any)?.message || '' },
-          aiMessage: {
-            role: 'assistant',
-            content: 'This is a mock response. Deploy the Cloudflare Worker for full AI functionality.'
-          }
-        },
-        headers: { 'x-session-id': mockSessionId }
-      };
-    }
-  }
-
-  if (path.includes('/api/roleplay') || path.includes('/roleplay')) {
-    if (path.includes('/start')) {
-      return {
-        status: 200,
-        data: {
-          message: 'Mock roleplay started. Deploy the Cloudflare Worker for full functionality.',
-          hcpProfile: {
-            name: 'Dr. Mock',
-            specialty: 'Demo Mode',
-            mood: 'neutral'
-          }
-        },
-        headers: { 'x-session-id': mockSessionId }
-      };
-    }
-  }
-
-  // Default mock response for unknown endpoints
-  return {
-    status: 200,
-    data: { message: 'Mock API response', mode: 'demo' },
-    headers: { 'x-session-id': mockSessionId }
-  };
-}
-
-export function isMockApiEnabled(): boolean {
-  return MOCK_API_ENABLED && typeof window !== 'undefined' && window.location.hostname.includes('github.io');
-}
+// Mock message data
+export const MOCK_MESSAGES = {
+  'conv-1': [
+    {
+      id: 'msg-1',
+      conversationId: 'conv-1',
+      role: 'user',
+      content: 'What is artificial intelligence?',
+      createdAt: new Date('2024-01-15T10:00:00'),
+    },
+    {
+      id: 'msg-2',
+      conversationId: 'conv-1',
+      role: 'assistant',
+      content: 'Artificial Intelligence (AI) refers to the simulation of human intelligence in machines...',
+      createdAt: new Date('2024-01-15T10:00:05'),
+    },
+  ],
+  'conv-2': [
+    {
+      id: 'msg-3',
+      conversationId: 'conv-2',
+      role: 'user',
+      content: 'Explain machine learning',
+      createdAt: new Date('2024-01-14T15:30:00'),
+    },
+    {
+      id: 'msg-4',
+      conversationId: 'conv-2',
+      role: 'assistant',
+      content: 'Machine Learning is a subset of AI that enables systems to learn and improve from experience...',
+      createdAt: new Date('2024-01-14T15:30:08'),
+    },
+  ],
+};
