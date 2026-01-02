@@ -1,69 +1,158 @@
-// Mock API configuration
-// Set to false in production to use the actual Cloudflare Worker
-// Set to true during development if you want to use mock data
 export const MOCK_API_ENABLED = false;
 
-// Mock delay to simulate network latency (in ms)
-export const MOCK_DELAY = 500;
+interface MockResponse {
+  data?: any;
+  error?: string;
+  status: number;
+}
 
-// Mock user data
-export const MOCK_USER = {
-  id: 'mock-user-123',
-  email: 'demo@example.com',
-  name: 'Demo User',
-  createdAt: new Date('2024-01-01'),
-};
+let mockSessionId = '';
 
-// Mock conversation data
-export const MOCK_CONVERSATIONS = [
-  {
-    id: 'conv-1',
-    userId: 'mock-user-123',
-    title: 'Introduction to AI',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
-  },
-  {
-    id: 'conv-2',
-    userId: 'mock-user-123',
-    title: 'Machine Learning Basics',
-    createdAt: new Date('2024-01-14'),
-    updatedAt: new Date('2024-01-14'),
-  },
-];
+function getMockSessionId(): string {
+  if (!mockSessionId) {
+    mockSessionId = `mock-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+  return mockSessionId;
+}
 
-// Mock message data
-export const MOCK_MESSAGES = {
-  'conv-1': [
-    {
-      id: 'msg-1',
-      conversationId: 'conv-1',
-      role: 'user',
-      content: 'What is artificial intelligence?',
-      createdAt: new Date('2024-01-15T10:00:00'),
-    },
-    {
-      id: 'msg-2',
-      conversationId: 'conv-1',
-      role: 'assistant',
-      content: 'Artificial Intelligence (AI) refers to the simulation of human intelligence in machines...',
-      createdAt: new Date('2024-01-15T10:00:05'),
-    },
-  ],
-  'conv-2': [
-    {
-      id: 'msg-3',
-      conversationId: 'conv-2',
-      role: 'user',
-      content: 'Explain machine learning',
-      createdAt: new Date('2024-01-14T15:30:00'),
-    },
-    {
-      id: 'msg-4',
-      conversationId: 'conv-2',
-      role: 'assistant',
-      content: 'Machine Learning is a subset of AI that enables systems to learn and improve from experience...',
-      createdAt: new Date('2024-01-14T15:30:08'),
-    },
-  ],
-};
+export async function mockApiRequest(
+  endpoint: string,
+  options?: RequestInit
+): Promise<MockResponse> {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 200));
+
+  const method = options?.method || 'GET';
+  const body = options?.body ? JSON.parse(options.body as string) : null;
+
+  // Status endpoint
+  if (endpoint === '/api/status' && method === 'GET') {
+    return {
+      status: 200,
+      data: {
+        authenticated: true,
+        sessionId: getMockSessionId(),
+        user: {
+          id: 'mock-user-1',
+          name: 'Demo User',
+          email: 'demo@reflectivei.com'
+        }
+      }
+    };
+  }
+
+  // Health endpoint
+  if (endpoint === '/api/health' && method === 'GET') {
+    return {
+      status: 200,
+      data: {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        services: {
+          database: 'up',
+          api: 'up',
+          ml: 'up'
+        }
+      }
+    };
+  }
+
+  // Dashboard insights endpoint
+  if (endpoint === '/api/dashboard/insights' && method === 'GET') {
+    return {
+      status: 200,
+      data: {
+        insights: [
+          {
+            id: '1',
+            type: 'pattern',
+            title: 'Communication Pattern Detected',
+            description: 'You tend to ask more questions in the afternoon, showing increased curiosity during this time.',
+            confidence: 0.85,
+            timestamp: new Date(Date.now() - 86400000).toISOString()
+          },
+          {
+            id: '2',
+            type: 'emotion',
+            title: 'Emotional Trend',
+            description: 'Your recent conversations show a positive emotional trend, with increased expressions of satisfaction.',
+            confidence: 0.78,
+            timestamp: new Date(Date.now() - 172800000).toISOString()
+          },
+          {
+            id: '3',
+            type: 'behavior',
+            title: 'Engagement Insight',
+            description: 'You engage more deeply with technical topics, spending 40% more time on these discussions.',
+            confidence: 0.92,
+            timestamp: new Date(Date.now() - 259200000).toISOString()
+          }
+        ],
+        summary: {
+          totalInsights: 3,
+          newInsights: 1,
+          lastUpdated: new Date().toISOString()
+        }
+      }
+    };
+  }
+
+  // Chat endpoint
+  if (endpoint === '/api/chat' && method === 'POST') {
+    const userMessage = body?.message || '';
+    
+    // Simulate AI response based on input
+    const responses = [
+      "That's an interesting question. Based on your previous interactions, I can help you explore that further.",
+      "I understand what you're asking. Let me provide some insights based on your patterns.",
+      "That's a thoughtful point. Your conversation history shows you're particularly interested in this topic.",
+      "Great question! Let me analyze that from multiple perspectives."
+    ];
+    
+    const aiResponse = responses[Math.floor(Math.random() * responses.length)];
+    
+    return {
+      status: 200,
+      data: {
+        message: aiResponse,
+        messageId: `msg-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        analysis: {
+          sentiment: 0.7 + Math.random() * 0.3,
+          topics: ['general', 'inquiry'],
+          intent: 'question'
+        }
+      }
+    };
+  }
+
+  // Roleplay endpoint
+  if (endpoint === '/api/roleplay' && method === 'POST') {
+    const scenario = body?.scenario || 'general';
+    const userInput = body?.input || '';
+    
+    return {
+      status: 200,
+      data: {
+        response: `[Roleplay Mode: ${scenario}] I'm engaging with you in this scenario. ${userInput ? 'Your input: ' + userInput : 'How would you like to proceed?'}`,
+        scenarioId: `scenario-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        context: {
+          scenario,
+          turn: 1,
+          participants: ['user', 'ai']
+        }
+      }
+    };
+  }
+
+  // Default 404 response
+  return {
+    status: 404,
+    error: 'Endpoint not found in mock API'
+  };
+}
+
+export function isMockApiEnabled(): boolean {
+  return MOCK_API_ENABLED && typeof window !== 'undefined' && window.location.hostname.includes('github.io');
+}
